@@ -3,16 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Basketball Game</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to CSS -->
+    <title>Basketball Game Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        #game-output {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #start-game-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        #reset-game-btn {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <div id="game-container">
-        <h1>Basketball Game</h1>
-        <div id="game-output"></div>
-        <button onclick="startGame()">Start Game</button>
-        <button onclick="resetGame()">Reset Game</button>
-    </div>
-    <script src="game.js"></script> <!-- Link to JavaScript -->
+    <h1>Basketball Game Simulation</h1>
+    <p>Click "Start Game" to begin the basketball game simulation.</p>
+
+    <!-- Buttons to start and reset the game -->
+    <button id="start-game-btn">Start Game</button>
+    <button id="reset-game-btn">Reset Game</button>
+
+    <!-- Game output display -->
+    <div id="game-output"></div>
+
+    <!-- Link to the JavaScript file -->
+    <script src="game.js"></script>
 </body>
 </html>
