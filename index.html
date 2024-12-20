@@ -50,74 +50,38 @@
             color: #333;
             font-size: 16px;
         }
-        /* Progress bars styling */
-        .progress-bar-container {
-            width: 100%;
-            height: 20px;
-            background-color: #ddd;
+        /* Scoreboard styling */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            font-size: 24px;
             margin-top: 10px;
-            border-radius: 10px;
         }
-        .progress-bar {
-            height: 100%;
-            border-radius: 10px;
-        }
-        #player-progress-bar {
-            background-color: #4CAF50; /* Green for player */
-            width: 0%;
-        }
-        #opponent-progress-bar {
-            background-color: #f44336; /* Red for opponent */
-            width: 0%;
-        }
-
-        /* Scoreboard Styling */
-        #scoreboard {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            border: 2px solid #007bff;
-            border-radius: 8px;
-            padding: 15px;
-            width: 250px;
-            margin: 20px auto;
+        .scoreboard div {
+            width: 45%;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        #scoreboard h2 {
-            color: #007bff;
-        }
-
-        #scoreboard span {
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #333;
         }
     </style>
 </head>
 <body>
     <h1>Basketball Game Simulation</h1>
 
-    <!-- Scoreboard -->
-    <div id="scoreboard">
-        <h2>Scoreboard</h2>
-        <p>Quarter: <span id="current-quarter">1</span></p>
-        <p>Player Score: <span id="player-score">0</span></p>
-        <p>Opponent Score: <span id="opponent-score">0</span></p>
-    </div>
-
     <div class="game-container">
+        <!-- Scoreboard -->
+        <div class="scoreboard">
+            <div>
+                <strong>Player</strong>
+                <p id="player-score">0</p>
+            </div>
+            <div>
+                <strong>Opponent</strong>
+                <p id="opponent-score">0</p>
+            </div>
+        </div>
+
         <div>
             <button id="start-game-btn">Start Game</button>
             <button id="reset-game-btn">Reset Game</button>
-        </div>
-
-        <!-- Progress Bars -->
-        <div class="progress-bar-container">
-            <div id="player-progress-bar" class="progress-bar"></div>
-        </div>
-        <div class="progress-bar-container">
-            <div id="opponent-progress-bar" class="progress-bar"></div>
         </div>
 
         <div id="game-status">
@@ -126,54 +90,168 @@
     </div>
 
     <script>
-        // Global variables
-        let gameOver = false;
         let currentQuarter = 1;
         let scorePlayer = 0;
         let scoreOpponent = 0;
-        const maxScore = 100;  // Max score for progress bar
+        let gameOver = false;
+        let seasonWinsPlayer = 0;
+        let seasonWinsOpponent = 0;
+        let playerTeam = ['Player 1', 'Player 2', 'Player 3']; // Example player names
+        let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3']; // Example opponent names
+
+        // Function to update the game status
+        function updateGameStatus(message) {
+            document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
+        }
 
         // Function to update the scoreboard
         function updateScoreboard() {
-            document.getElementById('current-quarter').textContent = currentQuarter;
             document.getElementById('player-score').textContent = scorePlayer;
             document.getElementById('opponent-score').textContent = scoreOpponent;
         }
 
-        // Function to update the progress bars
-        function updateProgressBars() {
-            const playerProgress = (scorePlayer / maxScore) * 100;
-            const opponentProgress = (scoreOpponent / maxScore) * 100;
-            document.getElementById('player-progress-bar').style.width = playerProgress + '%';
-            document.getElementById('opponent-progress-bar').style.width = opponentProgress + '%';
+        // Function to simulate a 2-point shot
+        function shoot(player) {
+            let shotChance = Math.random();
+            if (player === "player") {
+                return shotChance < 0.5; // 50% chance for player to make the shot
+            } else {
+                return shotChance < 0.45; // 45% chance for opponent to make the shot
+            }
         }
 
-        // Function to simulate a shot
-        function shoot(player) {
-            return Math.random() > 0.5;  // 50% chance of making a shot
+        // Function to simulate a pass
+        function passBall(team) {
+            let players = team === 'player' ? playerTeam : opponentTeam;
+            let randomIndex = Math.floor(Math.random() * players.length);
+            return players[randomIndex];
         }
 
         // Function to simulate a quarter
         function simulateQuarter() {
             if (gameOver) return;
-            // Game logic for scoring...
-            scorePlayer += Math.floor(Math.random() * 10); // Example scoring
-            scoreOpponent += Math.floor(Math.random() * 10); // Example scoring
-            updateScoreboard();
-            updateProgressBars();
+
+            // Track attempts for each team
+            let playerShotsMade = 0;
+            let opponentShotsMade = 0;
+
+            // Player team attempts (5 shots)
+            for (let i = 0; i < 5; i++) {
+                let player = passBall('player');
+                let playerAction = Math.floor(Math.random() * 4) + 1; // Random action for player
+
+                if (playerAction === 1) {  // 2-point shot attempt
+                    if (shoot(player)) {
+                        scorePlayer += 2;
+                        playerShotsMade++;
+                        updateGameStatus(`${player} scores a 2-point shot!`);
+                        updateScoreboard();
+                    } else {
+                        updateGameStatus(`${player} misses a 2-point shot.`);
+                    }
+                } else if (playerAction === 2) {  // 3-point shot attempt
+                    if (shoot(player)) {
+                        scorePlayer += 3;
+                        playerShotsMade++;
+                        updateGameStatus(`${player} scores a 3-point shot!`);
+                        updateScoreboard();
+                    } else {
+                        updateGameStatus(`${player} misses a 3-point shot.`);
+                    }
+                } else if (playerAction === 3) {  // Pass ball
+                    let newHandler = passBall('player');
+                    updateGameStatus(`${player} passes the ball to ${newHandler}.`);
+                }
+            }
+
+            // Opponent team attempts (5 shots)
+            for (let i = 0; i < 5; i++) {
+                let opponent = passBall('opponent');
+                let opponentAction = Math.floor(Math.random() * 4) + 1; // Random action for opponent
+
+                if (opponentAction === 1) {  // 2-point shot attempt
+                    if (shoot(opponent)) {
+                        scoreOpponent += 2;
+                        opponentShotsMade++;
+                        updateGameStatus(`${opponent} scores a 2-point shot!`);
+                        updateScoreboard();
+                    } else {
+                        updateGameStatus(`${opponent} misses a 2-point shot.`);
+                    }
+                } else if (opponentAction === 2) {  // 3-point shot attempt
+                    if (shoot(opponent)) {
+                        scoreOpponent += 3;
+                        opponentShotsMade++;
+                        updateGameStatus(`${opponent} scores a 3-point shot!`);
+                        updateScoreboard();
+                    } else {
+                        updateGameStatus(`${opponent} misses a 3-point shot.`);
+                    }
+                } else if (opponentAction === 3) {  // Pass ball
+                    let newHandler = passBall('opponent');
+                    updateGameStatus(`${opponent} passes the ball to ${newHandler}.`);
+                }
+            }
+
+            // After 5 shots each, update the game state
+            updateGameStatus(`Quarter ${currentQuarter} complete: Player made ${playerShotsMade} shots, Opponent made ${opponentShotsMade} shots.`);
+
+            // Move to the next quarter or end the game if it's the last quarter
+            if (currentQuarter < 4) {
+                currentQuarter++;
+                updateGameStatus(`Starting Quarter ${currentQuarter}...`);
+            } else {
+                gameOver = true;
+                if (scorePlayer > scoreOpponent) {
+                    updateGameStatus("Game over! Player wins!");
+                    seasonWinsPlayer++;
+                } else if (scoreOpponent > scorePlayer) {
+                    updateGameStatus("Game over! Opponent wins!");
+                    seasonWinsOpponent++;
+                } else {
+                    updateGameStatus("Game over! It's a tie!");
+                }
+
+                // Show final scores for both teams at the end of the game
+                updateGameStatus(`Final Score: Player: ${scorePlayer} | Opponent: ${scoreOpponent}`);
+            }
         }
 
-        // Start and Reset Game Functions
-        document.getElementById('start-game-btn').addEventListener('click', function() {
-            if (!gameOver) simulateQuarter();
-        });
-        document.getElementById('reset-game-btn').addEventListener('click', function() {
+        // Function to start the game
+        function startGame() {
+            gameOver = false;
             currentQuarter = 1;
             scorePlayer = 0;
             scoreOpponent = 0;
-            gameOver = false;
+            updateGameStatus("Game started! Quarter 1");
             updateScoreboard();
-            updateProgressBars();
+
+            // Simulate the first quarter
+            simulateQuarter();
+        }
+
+        // Function to reset the game
+        function resetGame() {
+            gameOver = false;
+            currentQuarter = 1;
+            scorePlayer = 0;
+            scoreOpponent = 0;
+            updateGameStatus("Game reset! Quarter 1");
+            document.getElementById('game-status').innerHTML = ''; // Clear previous game info
+            updateScoreboard(); // Reset the scoreboard
+        }
+
+        // Event listeners for buttons
+        document.getElementById('start-game-btn').addEventListener('click', function() {
+            if (!gameOver) {
+                simulateQuarter();
+            } else {
+                startGame(); // Restart the game if it's over
+            }
+        });
+
+        document.getElementById('reset-game-btn').addEventListener('click', function() {
+            resetGame(); // Reset the game
         });
     </script>
 </body>
