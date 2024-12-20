@@ -39,30 +39,26 @@ function passBall(team) {
 function simulateQuarter() {
     if (gameOver) return;
 
-    // Track attempts for each team
-    let playerShotsMade = 0;
-    let opponentShotsMade = 0;
+    // Track points for each team
+    let playerPoints = 0;
+    let opponentPoints = 0;
 
-    // Player team attempts (5 shots)
-    for (let i = 0; i < 5; i++) {
+    // Player team attempts (20 shots)
+    for (let i = 0; i < 20; i++) {
         let player = passBall('player');
         let playerAction = Math.floor(Math.random() * 4) + 1; // Random action for player
 
         if (playerAction === 1) {  // 2-point shot attempt
             if (shoot(player)) {
-                scorePlayer += 2;
-                playerShotsMade++;
+                playerPoints += 2;
                 updateGameStatus(`${player} scores a 2-point shot!`);
-                updateScoreboard();
             } else {
                 updateGameStatus(`${player} misses a 2-point shot.`);
             }
         } else if (playerAction === 2) {  // 3-point shot attempt
             if (shoot(player)) {
-                scorePlayer += 3;
-                playerShotsMade++;
+                playerPoints += 3;
                 updateGameStatus(`${player} scores a 3-point shot!`);
-                updateScoreboard();
             } else {
                 updateGameStatus(`${player} misses a 3-point shot.`);
             }
@@ -72,26 +68,22 @@ function simulateQuarter() {
         }
     }
 
-    // Opponent team attempts (5 shots)
-    for (let i = 0; i < 5; i++) {
+    // Opponent team attempts (20 shots)
+    for (let i = 0; i < 20; i++) {
         let opponent = passBall('opponent');
         let opponentAction = Math.floor(Math.random() * 4) + 1; // Random action for opponent
 
         if (opponentAction === 1) {  // 2-point shot attempt
             if (shoot(opponent)) {
-                scoreOpponent += 2;
-                opponentShotsMade++;
+                opponentPoints += 2;
                 updateGameStatus(`${opponent} scores a 2-point shot!`);
-                updateScoreboard();
             } else {
                 updateGameStatus(`${opponent} misses a 2-point shot.`);
             }
         } else if (opponentAction === 2) {  // 3-point shot attempt
             if (shoot(opponent)) {
-                scoreOpponent += 3;
-                opponentShotsMade++;
+                opponentPoints += 3;
                 updateGameStatus(`${opponent} scores a 3-point shot!`);
-                updateScoreboard();
             } else {
                 updateGameStatus(`${opponent} misses a 3-point shot.`);
             }
@@ -101,8 +93,12 @@ function simulateQuarter() {
         }
     }
 
-    // After 5 shots each, update the game state
-    updateGameStatus(`Quarter ${currentQuarter} complete: Player made ${playerShotsMade} shots, Opponent made ${opponentShotsMade} shots.`);
+    // After 20 shots each, update the game state for the quarter
+    scorePlayer += playerPoints;
+    scoreOpponent += opponentPoints;
+
+    updateGameStatus(`Quarter ${currentQuarter} complete: Player scored ${playerPoints} points, Opponent scored ${opponentPoints} points.`);
+    updateScoreboard();
 
     // Move to the next quarter or end the game if it's the last quarter
     if (currentQuarter < 4) {
@@ -148,3 +144,16 @@ function resetGame() {
     document.getElementById('game-status').innerHTML = ''; // Clear previous game info
     updateScoreboard(); // Reset the scoreboard
 }
+
+// Event listeners for buttons
+document.getElementById('start-game-btn').addEventListener('click', function() {
+    if (!gameOver) {
+        simulateQuarter();
+    } else {
+        startGame(); // Restart the game if it's over
+    }
+});
+
+document.getElementById('reset-game-btn').addEventListener('click', function() {
+    resetGame(); // Reset the game
+});
