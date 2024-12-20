@@ -67,22 +67,25 @@
 
             let quarterOutput = `Quarter ${currentQuarter} results: <br>`;
 
-            // Simulate Player's Action
-            const playerShot = shoot("player");
-            if (playerShot) {
-                scorePlayer += 2; // Player scores a 2-point shot
-                quarterOutput += "Player makes a 2-point shot!<br>";
-            } else {
-                quarterOutput += "Player misses the shot.<br>";
-            }
+            // Simulate multiple actions per team (5 actions per team)
+            for (let i = 0; i < 5; i++) {  // Simulate 5 actions per team
+                // Simulate Player's Action
+                const playerShot = shoot("player");
+                if (playerShot) {
+                    scorePlayer += 2; // Player scores a 2-point shot
+                    quarterOutput += "Player makes a 2-point shot!<br>";
+                } else {
+                    quarterOutput += "Player misses the shot.<br>";
+                }
 
-            // Simulate Opponent's Action
-            const opponentShot = shoot("opponent");
-            if (opponentShot) {
-                scoreOpponent += 2; // Opponent scores a 2-point shot
-                quarterOutput += "Opponent makes a 2-point shot!<br>";
-            } else {
-                quarterOutput += "Opponent misses the shot.<br>";
+                // Simulate Opponent's Action
+                const opponentShot = shoot("opponent");
+                if (opponentShot) {
+                    scoreOpponent += 2; // Opponent scores a 2-point shot
+                    quarterOutput += "Opponent makes a 2-point shot!<br>";
+                } else {
+                    quarterOutput += "Opponent misses the shot.<br>";
+                }
             }
 
             // Update Score and Quarter
@@ -131,3 +134,4 @@
     </script>
 </body>
 </html>
+
