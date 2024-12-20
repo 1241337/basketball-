@@ -187,7 +187,7 @@
                 simulateQuarter();
                 currentQuarter++;
 
-                // Check for game over condition
+                // Check if we have completed all 4 quarters
                 if (currentQuarter > 4) {
                     gameOver = true;
                     if (scorePlayer > scoreOpponent) {
@@ -197,6 +197,8 @@
                     } else {
                         updateGameStatus("It's a tie!");
                     }
+                } else {
+                    updateGameStatus(`Starting Quarter ${currentQuarter}`);
                 }
             }
         }
