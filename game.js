@@ -1,159 +1,146 @@
-<script>
-    let scorePlayer = 0;
-    let scoreOpponent = 0;
-    let currentQuarter = 1;
-    let gameOver = false;
-    let gameLog = [];
+// Global variables
+let gameOver = false;
+let currentQuarter = 1;
+let scorePlayer = 0;
+let scoreOpponent = 0;
+let playerTeam = ['Player 1', 'Player 2', 'Player 3'];  // Example player names
+let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3'];  // Example opponent names
+let seasonWinsPlayer = 0;
+let seasonWinsOpponent = 0;
 
-    const playerTeam = {
-        "Player 1": { shooting: 7, passing: 6, defense: 5, energy: 100 },
-        "Player 2": { shooting: 6, passing: 7, defense: 6, energy: 100 },
-        "Player 3": { shooting: 8, passing: 5, defense: 6, energy: 100 }
-    };
+// Function to simulate a shot
+function shoot(player) {
+    // Simulate shooting success (just a random chance for simplicity)
+    return Math.random() > 0.5;  // 50% chance of making a shot
+}
 
-    const opponentTeam = {
-        "Opponent 1": { shooting: 6, passing: 6, defense: 7, energy: 100 },
-        "Opponent 2": { shooting: 7, passing: 6, defense: 6, energy: 100 },
-        "Opponent 3": { shooting: 6, passing: 7, defense: 5, energy: 100 }
-    };
-
-    let gameLogElement = document.getElementById('game-log');
-    let statusElement = document.getElementById('game-status');
-
-    function updateGameStatus(message) {
-        statusElement.innerHTML = message;
-        gameLog.push(message);
-        renderGameLog();
+// Function to pass the ball (random player switch)
+function passBall(team) {
+    if (team === 'player') {
+        return playerTeam[Math.floor(Math.random() * playerTeam.length)];
+    } else {
+        return opponentTeam[Math.floor(Math.random() * opponentTeam.length)];
     }
+}
 
-    function renderGameLog() {
-        gameLogElement.innerHTML = '';
-        gameLog.forEach((log, index) => {
-            gameLogElement.innerHTML += `<p>${log}</p>`;
-        });
-    }
+// Function to update the game status
+function updateGameStatus(message) {
+    document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
+}
 
-    function shoot(player) {
-        let chance = Math.random();
-        let shootingAccuracy = playerTeam[player] ? playerTeam[player].shooting : opponentTeam[player].shooting;
-        return chance < shootingAccuracy / 10;
-    }
+// Function to simulate a quarter
+function simulateQuarter() {
+    if (gameOver) return;
 
-    function passBall(team) {
-        let players = team === 'player' ? Object.keys(playerTeam) : Object.keys(opponentTeam);
-        let newHandler = players[Math.floor(Math.random() * players.length)];
-        return newHandler;
-    }
+    // Track attempts for each team
+    let playerShotsMade = 0;
+    let opponentShotsMade = 0;
 
-    function simulateQuarter() {
-        if (gameOver) return;
-
-        let playerAction = Math.floor(Math.random() * 4) + 1;
+    // Player team attempts (5 shots)
+    for (let i = 0; i < 5; i++) {
         let player = passBall('player');
-        if (playerAction === 1) {
+        let playerAction = Math.floor(Math.random() * 4) + 1; // Random action for player
+
+        if (playerAction === 1) {  // 2-point shot attempt
             if (shoot(player)) {
                 scorePlayer += 2;
+                playerShotsMade++;
                 updateGameStatus(`${player} scores a 2-point shot!`);
             } else {
                 updateGameStatus(`${player} misses a 2-point shot.`);
             }
-        } else if (playerAction === 2) {
+        } else if (playerAction === 2) {  // 3-point shot attempt
             if (shoot(player)) {
                 scorePlayer += 3;
+                playerShotsMade++;
                 updateGameStatus(`${player} scores a 3-point shot!`);
             } else {
                 updateGameStatus(`${player} misses a 3-point shot.`);
             }
-        } else if (playerAction === 3) {
+        } else if (playerAction === 3) {  // Pass ball
             let newHandler = passBall('player');
             updateGameStatus(`${player} passes the ball to ${newHandler}.`);
         }
+    }
 
-        let opponentAction = Math.floor(Math.random() * 4) + 1;
+    // Opponent team attempts (5 shots)
+    for (let i = 0; i < 5; i++) {
         let opponent = passBall('opponent');
-        if (opponentAction === 1) {
+        let opponentAction = Math.floor(Math.random() * 4) + 1; // Random action for opponent
+
+        if (opponentAction === 1) {  // 2-point shot attempt
             if (shoot(opponent)) {
                 scoreOpponent += 2;
+                opponentShotsMade++;
                 updateGameStatus(`${opponent} scores a 2-point shot!`);
             } else {
                 updateGameStatus(`${opponent} misses a 2-point shot.`);
             }
-        } else if (opponentAction === 2) {
+        } else if (opponentAction === 2) {  // 3-point shot attempt
             if (shoot(opponent)) {
                 scoreOpponent += 3;
+                opponentShotsMade++;
                 updateGameStatus(`${opponent} scores a 3-point shot!`);
             } else {
                 updateGameStatus(`${opponent} misses a 3-point shot.`);
             }
-        } else if (opponentAction === 3) {
+        } else if (opponentAction === 3) {  // Pass ball
             let newHandler = passBall('opponent');
             updateGameStatus(`${opponent} passes the ball to ${newHandler}.`);
         }
-
-        if (currentQuarter > 4) {
-            gameOver = true;
-            if (scorePlayer > scoreOpponent) {
-                updateGameStatus("Game over! Player wins!");
-            } else if (scoreOpponent > scorePlayer) {
-                updateGameStatus("Game over! Opponent wins!");
-            } else {
-                updateGameStatus("Game over! It's a tie!");
-            }
-        }
     }
 
-    function startGame() {
-        if (!gameOver) {
-            if (currentQuarter <= 4) {
-                updateGameStatus(`Quarter ${currentQuarter} in progress...`);
-                simulateQuarter();
-                currentQuarter++;
+    // After 5 shots each, update the game state
+    updateGameStatus(`Quarter ${currentQuarter} complete: Player made ${playerShotsMade} shots, Opponent made ${opponentShotsMade} shots.`);
 
-                if (currentQuarter > 4) {
-                    gameOver = true;
-                    if (scorePlayer > scoreOpponent) {
-                        updateGameStatus("Player wins!");
-                    } else if (scoreOpponent > scorePlayer) {
-                        updateGameStatus("Opponent wins!");
-                    } else {
-                        updateGameStatus("It's a tie!");
-                    }
-                } else {
-                    updateGameStatus(`Starting Quarter ${currentQuarter}`);
-                }
-            }
+    // Move to the next quarter or end the game if it's the last quarter
+    if (currentQuarter < 4) {
+        currentQuarter++;
+        updateGameStatus(`Starting Quarter ${currentQuarter}...`);
+    } else {
+        gameOver = true;
+        if (scorePlayer > scoreOpponent) {
+            updateGameStatus("Game over! Player wins!");
+            seasonWinsPlayer++;
+        } else if (scoreOpponent > scorePlayer) {
+            updateGameStatus("Game over! Opponent wins!");
+            seasonWinsOpponent++;
         } else {
-            updateGameStatus("Game already over. Click reset to play again.");
+            updateGameStatus("Game over! It's a tie!");
         }
     }
+}
 
-    function advanceQuarter() {
-        if (gameOver) {
-            updateGameStatus("Game already over. Click reset to play again.");
-            return;
-        }
+// Function to start the game
+function startGame() {
+    gameOver = false;
+    currentQuarter = 1;
+    scorePlayer = 0;
+    scoreOpponent = 0;
+    updateGameStatus("Game started! Quarter 1");
 
-        if (currentQuarter <= 4) {
-            updateGameStatus(`Advancing to Quarter ${currentQuarter}...`);
-            simulateQuarter();
-            currentQuarter++;
+    // Simulate the first quarter
+    simulateQuarter();
+}
 
-            if (currentQuarter > 4) {
-                gameOver = true;
-                if (scorePlayer > scoreOpponent) {
-                    updateGameStatus("Game over! Player wins!");
-                } else if (scoreOpponent > scorePlayer) {
-                    updateGameStatus("Game over! Opponent wins!");
-                } else {
-                    updateGameStatus("Game over! It's a tie!");
-                }
-            } else {
-                updateGameStatus(`Starting Quarter ${currentQuarter}`);
-            }
-        }
+// Function to reset the game
+function resetGame() {
+    gameOver = false;
+    currentQuarter = 1;
+    scorePlayer = 0;
+    scoreOpponent = 0;
+    updateGameStatus("Game reset! Quarter 1");
+}
+
+// Event listeners for buttons
+document.getElementById('start-game-btn').addEventListener('click', function() {
+    if (!gameOver) {
+        simulateQuarter();
+    } else {
+        startGame(); // Restart the game if it's over
     }
+});
 
-    document.getElementById('start-button').addEventListener('click', startGame);
-    document.getElementById('advance-button').addEventListener('click', advanceQuarter);
-    document.getElementById('reset-button').addEventListener('click', resetGame);
-</script>
+document.getElementById('reset-game-btn').addEventListener('click', function() {
+    resetGame(); // Reset the game
+});
