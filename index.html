@@ -20,8 +20,14 @@
         .status {
             margin-top: 20px;
         }
-        .stats {
+        .stats, .player-stats {
             margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-top: 20px;
+        }
+        .player-stats {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -33,7 +39,7 @@
     <div class="game-board" id="gameBoard"></div>
     
     <div class="status" id="status"></div>
-    <div class="stats" id="stats"></div>
+    <div class="player-stats" id="playerStats"></div>
 
     <script>
         // Game variables
@@ -161,6 +167,7 @@
             }
             updateGameStatus(`Quarter ${currentQuarter} complete!`);
             updateGameStatus(`Score - Player: ${scorePlayer}, Opponent: ${scoreOpponent}`);
+            updatePlayerStatsDisplay();
         }
 
         // Function to start the game
@@ -194,6 +201,7 @@
             benchPlayers = ['player4', 'player5', 'player6'];
             courtPlayers = ['player1', 'player2', 'player3'];
             updateGameStatus("Game has been reset.");
+            updatePlayerStatsDisplay();
         }
 
         // Function to update game status in the HTML
@@ -202,16 +210,16 @@
             statusDiv.innerHTML += message + "<br>";
         }
 
-        // Function to update stats in the HTML
-        function updateStats() {
-            const statsDiv = document.getElementById('stats');
-            statsDiv.innerHTML = "<h3>Player Stats:</h3>";
+        // Function to update player stats in the HTML
+        function updatePlayerStatsDisplay() {
+            const playerStatsDiv = document.getElementById('playerStats');
+            playerStatsDiv.innerHTML = "<h3>Player Stats:</h3>";
             for (let player in playerStats) {
-                statsDiv.innerHTML += `${player}: ${playerStats[player].points} points, ${playerEnergy[player]}% energy<br>`;
+                playerStatsDiv.innerHTML += `${player}: ${playerStats[player].points} points, ${playerEnergy[player]}% energy, ${playerFouls[player]} fouls<br>`;
             }
-            statsDiv.innerHTML += "<h3>Opponent Stats:</h3>";
+            playerStatsDiv.innerHTML += "<h3>Opponent Stats:</h3>";
             for (let opponent in opponentStats) {
-                statsDiv.innerHTML += `${opponent}: ${opponentStats[opponent].points} points, ${opponentEnergy[opponent]}% energy<br>`;
+                playerStatsDiv.innerHTML += `${opponent}: ${opponentStats[opponent].points} points, ${opponentEnergy[opponent]}% energy, ${opponentFouls[opponent]} fouls<br>`;
             }
         }
 
@@ -219,7 +227,7 @@
         document.getElementById('startButton').addEventListener('click', () => {
             if (!gameOver) {
                 startGame();
-                updateStats();
+                updatePlayerStatsDisplay();
             }
         });
 
