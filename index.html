@@ -38,92 +38,12 @@
 
     <!-- Buttons to start and reset the game -->
     <button id="start-game-btn">Start Game</button>
-    <button id="reset-game-btn" disabled>Reset Game</button>
+    <button id="reset-game-btn">Reset Game</button>
 
     <!-- Game output display -->
     <div id="game-output"></div>
 
-    <script>
-        // Game Variables
-        let scorePlayer = 0;
-        let scoreOpponent = 0;
-        let gameOver = false;
-        let currentQuarter = 1;
-        const totalQuarters = 4;
-
-        // Simulating Shooting Function
-        function shoot(player) {
-            const chance = Math.random();
-            if (player === "player") {
-                return chance <= 0.6; // Player has 60% chance to score
-            } else {
-                return chance <= 0.5; // Opponent has 50% chance to score
-            }
-        }
-
-        // Simulate a Quarter
-        function simulateQuarter() {
-            if (gameOver) return;
-
-            let quarterOutput = `Quarter ${currentQuarter} results: <br>`;
-
-            // Simulate Player's Action
-            const playerShot = shoot("player");
-            if (playerShot) {
-                scorePlayer += 2; // Player scores a 2-point shot
-                quarterOutput += "Player makes a 2-point shot!<br>";
-            } else {
-                quarterOutput += "Player misses the shot.<br>";
-            }
-
-            // Simulate Opponent's Action
-            const opponentShot = shoot("opponent");
-            if (opponentShot) {
-                scoreOpponent += 2; // Opponent scores a 2-point shot
-                quarterOutput += "Opponent makes a 2-point shot!<br>";
-            } else {
-                quarterOutput += "Opponent misses the shot.<br>";
-            }
-
-            // Update Score and Quarter
-            document.getElementById("game-output").innerHTML = `
-                ${quarterOutput}
-                <br>Current Score - Player: ${scorePlayer} | Opponent: ${scoreOpponent}
-            `;
-
-            currentQuarter++;
-
-            // Check if the game is over
-            if (currentQuarter > totalQuarters) {
-                gameOver = true;
-                const winner = scorePlayer > scoreOpponent ? "Player" : (scoreOpponent > scorePlayer ? "Opponent" : "No one, it's a tie");
-                document.getElementById("game-output").innerHTML += `<br>Game Over! ${winner} wins!`;
-                document.getElementById("reset-game-btn").disabled = false;
-            }
-        }
-
-        // Start Game Button Logic
-        document.getElementById("start-game-btn").addEventListener("click", function() {
-            if (gameOver) {
-                scorePlayer = 0;
-                scoreOpponent = 0;
-                currentQuarter = 1;
-                gameOver = false;
-                document.getElementById("game-output").innerHTML = "New game started!";
-                document.getElementById("reset-game-btn").disabled = true;
-            }
-            simulateQuarter();
-        });
-
-        // Reset Game Button Logic
-        document.getElementById("reset-game-btn").addEventListener("click", function() {
-            scorePlayer = 0;
-            scoreOpponent = 0;
-            currentQuarter = 1;
-            gameOver = false;
-            document.getElementById("game-output").innerHTML = "Game has been reset. Click 'Start Game' to begin!";
-            document.getElementById("reset-game-btn").disabled = true;
-        });
-    </script>
+    <!-- Link to the JavaScript file -->
+    <script src="game.js"></script>
 </body>
 </html>
