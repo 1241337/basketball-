@@ -25,6 +25,15 @@ const opponentTeam = {
 let momentumPlayer = 1.0;
 let momentumOpponent = 1.0;
 
+// DOM elements
+const gameOutput = document.getElementById("game-output");
+const startButton = document.getElementById("start-game-btn");
+const resetButton = document.getElementById("reset-game-btn");
+
+// Event listeners for buttons
+startButton.addEventListener("click", startGame);
+resetButton.addEventListener("click", resetGame);
+
 // Start the game
 function startGame() {
     scorePlayer = 0;
@@ -34,7 +43,7 @@ function startGame() {
     opponentFouls = 0;
     currentQuarter = 1;
     gameOver = false;
-    document.getElementById("game-output").innerHTML = "Game Started! Quarter 1";
+    gameOutput.innerHTML = "Game Started! Quarter 1";
     simulateQuarter();
 }
 
@@ -48,7 +57,7 @@ function simulateQuarter() {
     }
 
     // Display current scores
-    document.getElementById("game-output").innerHTML = `
+    gameOutput.innerHTML = `
         Player: ${scorePlayer} | Opponent: ${scoreOpponent} <br>
         Quarter ${currentQuarter} complete!
     `;
@@ -207,5 +216,5 @@ function resetGame() {
     currentQuarter = 1;
     gameOver = false;
     console.log("Game Reset!");
-    document.getElementById("game-output").innerHTML = "Game Reset!";
+    gameOutput.innerHTML = "Game Reset!";
 }
