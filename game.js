@@ -108,6 +108,9 @@ function simulateQuarter() {
         } else {
             updateGameStatus("Game over! It's a tie!");
         }
+
+        // Show final scores for both teams at the end of the game
+        updateGameStatus(`Final Score: Player: ${scorePlayer} | Opponent: ${scoreOpponent}`);
     }
 }
 
