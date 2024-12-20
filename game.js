@@ -4,10 +4,12 @@ let scoreOpponent = 0;
 let gameOver = false;
 let seasonWinsPlayer = 0;
 let seasonWinsOpponent = 0;
+let playerTeam = ['Player 1', 'Player 2', 'Player 3']; // Example player names
+let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3']; // Example opponent names
 
 // Function to update the game status
 function updateGameStatus(message) {
-    document.getElementById('game-status').innerHTML = message;
+    document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
 }
 
 // Function to simulate a 2-point shot
@@ -22,7 +24,7 @@ function shoot(player) {
 
 // Function to simulate a pass
 function passBall(team) {
-    let players = team === 'player' ? ['Player 1', 'Player 2', 'Player 3'] : ['Opponent 1', 'Opponent 2', 'Opponent 3'];
+    let players = team === 'player' ? playerTeam : opponentTeam;
     let randomIndex = Math.floor(Math.random() * players.length);
     return players[randomIndex];
 }
