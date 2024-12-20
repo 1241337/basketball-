@@ -70,10 +70,41 @@
             background-color: #f44336; /* Red for opponent */
             width: 0%;
         }
+
+        /* Scoreboard Styling */
+        #scoreboard {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 15px;
+            width: 250px;
+            margin: 20px auto;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #scoreboard h2 {
+            color: #007bff;
+        }
+
+        #scoreboard span {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #333;
+        }
     </style>
 </head>
 <body>
     <h1>Basketball Game Simulation</h1>
+
+    <!-- Scoreboard -->
+    <div id="scoreboard">
+        <h2>Scoreboard</h2>
+        <p>Quarter: <span id="current-quarter">1</span></p>
+        <p>Player Score: <span id="player-score">0</span></p>
+        <p>Opponent Score: <span id="opponent-score">0</span></p>
+    </div>
 
     <div class="game-container">
         <div>
@@ -100,30 +131,13 @@
         let currentQuarter = 1;
         let scorePlayer = 0;
         let scoreOpponent = 0;
-        let playerTeam = ['Player 1', 'Player 2', 'Player 3'];  // Example player names
-        let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3'];  // Example opponent names
-        let seasonWinsPlayer = 0;
-        let seasonWinsOpponent = 0;
         const maxScore = 100;  // Max score for progress bar
 
-        // Function to simulate a shot
-        function shoot(player) {
-            // Simulate shooting success (random chance for simplicity)
-            return Math.random() > 0.5;  // 50% chance of making a shot
-        }
-
-        // Function to pass the ball (random player switch)
-        function passBall(team) {
-            if (team === 'player') {
-                return playerTeam[Math.floor(Math.random() * playerTeam.length)];
-            } else {
-                return opponentTeam[Math.floor(Math.random() * opponentTeam.length)];
-            }
-        }
-
-        // Function to update the game status
-        function updateGameStatus(message) {
-            document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
+        // Function to update the scoreboard
+        function updateScoreboard() {
+            document.getElementById('current-quarter').textContent = currentQuarter;
+            document.getElementById('player-score').textContent = scorePlayer;
+            document.getElementById('opponent-score').textContent = scoreOpponent;
         }
 
         // Function to update the progress bars
@@ -134,128 +148,32 @@
             document.getElementById('opponent-progress-bar').style.width = opponentProgress + '%';
         }
 
+        // Function to simulate a shot
+        function shoot(player) {
+            return Math.random() > 0.5;  // 50% chance of making a shot
+        }
+
         // Function to simulate a quarter
         function simulateQuarter() {
             if (gameOver) return;
-
-            // Track attempts for each team
-            let playerShotsMade = 0;
-            let opponentShotsMade = 0;
-
-            // Player team attempts (5 shots)
-            for (let i = 0; i < 5; i++) {
-                let player = passBall('player');
-                let playerAction = Math.floor(Math.random() * 4) + 1; // Random action for player
-
-                if (playerAction === 1) {  // 2-point shot attempt
-                    if (shoot(player)) {
-                        scorePlayer += 2;
-                        playerShotsMade++;
-                        updateGameStatus(`${player} scores a 2-point shot!`);
-                    } else {
-                        updateGameStatus(`${player} misses a 2-point shot.`);
-                    }
-                } else if (playerAction === 2) {  // 3-point shot attempt
-                    if (shoot(player)) {
-                        scorePlayer += 3;
-                        playerShotsMade++;
-                        updateGameStatus(`${player} scores a 3-point shot!`);
-                    } else {
-                        updateGameStatus(`${player} misses a 3-point shot.`);
-                    }
-                } else if (playerAction === 3) {  // Pass ball
-                    let newHandler = passBall('player');
-                    updateGameStatus(`${player} passes the ball to ${newHandler}.`);
-                }
-            }
-
-            // Opponent team attempts (5 shots)
-            for (let i = 0; i < 5; i++) {
-                let opponent = passBall('opponent');
-                let opponentAction = Math.floor(Math.random() * 4) + 1; // Random action for opponent
-
-                if (opponentAction === 1) {  // 2-point shot attempt
-                    if (shoot(opponent)) {
-                        scoreOpponent += 2;
-                        opponentShotsMade++;
-                        updateGameStatus(`${opponent} scores a 2-point shot!`);
-                    } else {
-                        updateGameStatus(`${opponent} misses a 2-point shot.`);
-                    }
-                } else if (opponentAction === 2) {  // 3-point shot attempt
-                    if (shoot(opponent)) {
-                        scoreOpponent += 3;
-                        opponentShotsMade++;
-                        updateGameStatus(`${opponent} scores a 3-point shot!`);
-                    } else {
-                        updateGameStatus(`${opponent} misses a 3-point shot.`);
-                    }
-                } else if (opponentAction === 3) {  // Pass ball
-                    let newHandler = passBall('opponent');
-                    updateGameStatus(`${opponent} passes the ball to ${newHandler}.`);
-                }
-            }
-
-            // After 5 shots each, update the game state
-            updateGameStatus(`Quarter ${currentQuarter} complete: Player made ${playerShotsMade} shots, Opponent made ${opponentShotsMade} shots.`);
-
-            // Move to the next quarter or end the game if it's the last quarter
-            if (currentQuarter < 4) {
-                currentQuarter++;
-                updateGameStatus(`Starting Quarter ${currentQuarter}...`);
-            } else {
-                gameOver = true;
-                if (scorePlayer > scoreOpponent) {
-                    updateGameStatus("Game over! Player wins!");
-                    seasonWinsPlayer++;
-                } else if (scoreOpponent > scorePlayer) {
-                    updateGameStatus("Game over! Opponent wins!");
-                    seasonWinsOpponent++;
-                } else {
-                    updateGameStatus("Game over! It's a tie!");
-                }
-
-                // Show final scores for both teams at the end of the game
-                updateGameStatus(`Final Score: Player: ${scorePlayer} | Opponent: ${scoreOpponent}`);
-            }
-
-            // Update progress bars after each quarter
+            // Game logic for scoring...
+            scorePlayer += Math.floor(Math.random() * 10); // Example scoring
+            scoreOpponent += Math.floor(Math.random() * 10); // Example scoring
+            updateScoreboard();
             updateProgressBars();
         }
 
-        // Function to start the game
-        function startGame() {
-            gameOver = false;
-            currentQuarter = 1;
-            scorePlayer = 0;
-            scoreOpponent = 0;
-            updateGameStatus("Game started! Quarter 1");
-
-            // Simulate the first quarter
-            simulateQuarter();
-        }
-
-        // Function to reset the game
-        function resetGame() {
-            gameOver = false;
-            currentQuarter = 1;
-            scorePlayer = 0;
-            scoreOpponent = 0;
-            updateGameStatus("Game reset! Quarter 1");
-            updateProgressBars();  // Reset progress bars
-        }
-
-        // Event listeners for buttons
+        // Start and Reset Game Functions
         document.getElementById('start-game-btn').addEventListener('click', function() {
-            if (!gameOver) {
-                simulateQuarter();
-            } else {
-                startGame(); // Restart the game if it's over
-            }
+            if (!gameOver) simulateQuarter();
         });
-
         document.getElementById('reset-game-btn').addEventListener('click', function() {
-            resetGame(); // Reset the game
+            currentQuarter = 1;
+            scorePlayer = 0;
+            scoreOpponent = 0;
+            gameOver = false;
+            updateScoreboard();
+            updateProgressBars();
         });
     </script>
 </body>
