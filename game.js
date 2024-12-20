@@ -1,31 +1,30 @@
-// Global variables
-let gameOver = false;
 let currentQuarter = 1;
 let scorePlayer = 0;
 let scoreOpponent = 0;
-let playerTeam = ['Player 1', 'Player 2', 'Player 3'];  // Example player names
-let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3'];  // Example opponent names
+let gameOver = false;
 let seasonWinsPlayer = 0;
 let seasonWinsOpponent = 0;
 
-// Function to simulate a shot
-function shoot(player) {
-    // Simulate shooting success (just a random chance for simplicity)
-    return Math.random() > 0.5;  // 50% chance of making a shot
+// Function to update the game status
+function updateGameStatus(message) {
+    document.getElementById('game-status').innerHTML = message;
 }
 
-// Function to pass the ball (random player switch)
-function passBall(team) {
-    if (team === 'player') {
-        return playerTeam[Math.floor(Math.random() * playerTeam.length)];
+// Function to simulate a 2-point shot
+function shoot(player) {
+    let shotChance = Math.random();
+    if (player === "player") {
+        return shotChance < 0.5; // 50% chance for player to make the shot
     } else {
-        return opponentTeam[Math.floor(Math.random() * opponentTeam.length)];
+        return shotChance < 0.45; // 45% chance for opponent to make the shot
     }
 }
 
-// Function to update the game status
-function updateGameStatus(message) {
-    document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
+// Function to simulate a pass
+function passBall(team) {
+    let players = team === 'player' ? ['Player 1', 'Player 2', 'Player 3'] : ['Opponent 1', 'Opponent 2', 'Opponent 3'];
+    let randomIndex = Math.floor(Math.random() * players.length);
+    return players[randomIndex];
 }
 
 // Function to simulate a quarter
@@ -133,17 +132,5 @@ function resetGame() {
     scorePlayer = 0;
     scoreOpponent = 0;
     updateGameStatus("Game reset! Quarter 1");
+    document.getElementById('game-status').innerHTML = ''; // Clear previous game info
 }
-
-// Event listeners for buttons
-document.getElementById('start-game-btn').addEventListener('click', function() {
-    if (!gameOver) {
-        simulateQuarter();
-    } else {
-        startGame(); // Restart the game if it's over
-    }
-});
-
-document.getElementById('reset-game-btn').addEventListener('click', function() {
-    resetGame(); // Reset the game
-});
