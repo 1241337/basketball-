@@ -105,6 +105,7 @@
         // Start Game Button Logic
         document.getElementById("start-game-btn").addEventListener("click", function() {
             if (gameOver) {
+                // Reset the game when it's over and button is clicked again
                 scorePlayer = 0;
                 scoreOpponent = 0;
                 currentQuarter = 1;
@@ -112,9 +113,10 @@
                 document.getElementById("game-output").innerHTML = "New game started! Quarter 1<br>";
                 document.getElementById("reset-game-btn").disabled = true;
             } else {
+                // Start simulating the first quarter
                 document.getElementById("game-output").innerHTML = "Game Started! Quarter 1<br>";
             }
-            simulateQuarter(); // Start simulating the first quarter
+            simulateQuarter(); // Simulate the first quarter
         });
 
         // Reset Game Button Logic
@@ -127,11 +129,5 @@
             document.getElementById("reset-game-btn").disabled = true;
         });
     </script>
-</body>
-</html>
-
-
-    <!-- Link to the JavaScript file -->
-    <script src="game.js"></script>
 </body>
 </html>
