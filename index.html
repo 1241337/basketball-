@@ -7,6 +7,11 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        .container {
+            text-align: center;
         }
         .game-board {
             margin-top: 20px;
@@ -16,30 +21,49 @@
             margin: 10px;
             font-size: 16px;
             cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
         }
         .status {
             margin-top: 20px;
+            font-size: 18px;
         }
-        .stats, .player-stats {
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ccc;
+        .stats {
             margin-top: 20px;
+            font-size: 16px;
         }
-        .player-stats {
-            margin-top: 20px;
+        .stats div {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Basketball Simulation Game</h1>
-    <button id="startButton" class="button">Start Game</button>
-    <button id="resetButton" class="button">Reset Game</button>
-    
-    <div class="game-board" id="gameBoard"></div>
-    
-    <div class="status" id="status"></div>
-    <div class="player-stats" id="playerStats"></div>
+    <div class="container">
+        <h1>Basketball Simulation Game</h1>
+        <button id="startButton" class="button">Start Game</button>
+        <button id="resetButton" class="button">Reset Game</button>
+        
+        <div class="status" id="status"></div>
+        
+        <div class="stats" id="playerStats">
+            <h3>Player Stats:</h3>
+            <p id="player1Stats">Player 1: 0 points, 100% energy, 0 fouls</p>
+            <p id="player2Stats">Player 2: 0 points, 100% energy, 0 fouls</p>
+            <p id="player3Stats">Player 3: 0 points, 100% energy, 0 fouls</p>
+        </div>
+        
+        <div class="stats" id="opponentStats">
+            <h3>Opponent Stats:</h3>
+            <p id="opponent1Stats">Opponent 1: 0 points, 100% energy, 0 fouls</p>
+            <p id="opponent2Stats">Opponent 2: 0 points, 100% energy, 0 fouls</p>
+            <p id="opponent3Stats">Opponent 3: 0 points, 100% energy, 0 fouls</p>
+        </div>
+    </div>
 
     <script>
         // Game variables
@@ -61,8 +85,6 @@
             opponent2: { shooting: 6, passing: 7, defense: 7, points: 0 },
             opponent3: { shooting: 8, passing: 5, defense: 6, points: 0 }
         };
-        let benchPlayers = ['player4', 'player5', 'player6'];
-        let courtPlayers = ['player1', 'player2', 'player3'];
 
         // Function to simulate shooting with fatigue
         function shoot(player) {
@@ -86,20 +108,8 @@
                 playerFouls[player]++;
                 updateGameStatus(`${player} now has ${playerFouls[player]} fouls.`);
                 if (playerFouls[player] >= 5) {
-                    updateGameStatus(`${player} has fouled out! Substituting.`);
-                    substitutePlayer(player, benchPlayers[0]); // Substituting with the first player on the bench
+                    updateGameStatus(`${player} has fouled out!`);
                 }
-            }
-        }
-
-        // Function to manage substitutions
-        function substitutePlayer(outPlayer, inPlayer) {
-            let outIndex = courtPlayers.indexOf(outPlayer);
-            if (outIndex !== -1) {
-                courtPlayers[outIndex] = inPlayer;
-                benchPlayers.push(outPlayer);
-                benchPlayers.splice(benchPlayers.indexOf(inPlayer), 1);
-                updateGameStatus(`${outPlayer} has been substituted for ${inPlayer}.`);
             }
         }
 
@@ -136,7 +146,7 @@
         function simulateQuarter() {
             for (let i = 0; i < 5; i++) {
                 // Simulate Player's Turn
-                let player = courtPlayers[Math.floor(Math.random() * courtPlayers.length)];
+                let player = `player${Math.floor(Math.random() * 3) + 1}`;
                 updateGameStatus(`Player's action: ${player} takes a shot.`);
                 takeShot(player);
                 decreaseEnergy(player);
@@ -172,19 +182,21 @@
 
         // Function to start the game
         function startGame() {
-            updateGameStatus(`Game started! Quarter ${currentQuarter}`);
-            simulateQuarter();
-            currentQuarter++;
+            if (!gameOver) {
+                updateGameStatus(`Game started! Quarter ${currentQuarter}`);
+                simulateQuarter();
+                currentQuarter++;
 
-            // Check for game over condition
-            if (currentQuarter > 4) {
-                gameOver = true;
-                if (scorePlayer > scoreOpponent) {
-                    updateGameStatus("Player wins!");
-                } else if (scoreOpponent > scorePlayer) {
-                    updateGameStatus("Opponent wins!");
-                } else {
-                    updateGameStatus("It's a tie!");
+                // Check for game over condition
+                if (currentQuarter > 4) {
+                    gameOver = true;
+                    if (scorePlayer > scoreOpponent) {
+                        updateGameStatus("Player wins!");
+                    } else if (scoreOpponent > scorePlayer) {
+                        updateGameStatus("Opponent wins!");
+                    } else {
+                        updateGameStatus("It's a tie!");
+                    }
                 }
             }
         }
@@ -198,10 +210,9 @@
             opponentFouls = { opponent1: 0, opponent2: 0, opponent3: 0 };
             playerEnergy = { player1: 100, player2: 100, player3: 100 };
             opponentEnergy = { opponent1: 100, opponent2: 100, opponent3: 100 };
-            benchPlayers = ['player4', 'player5', 'player6'];
-            courtPlayers = ['player1', 'player2', 'player3'];
             updateGameStatus("Game has been reset.");
             updatePlayerStatsDisplay();
+            gameOver = false;
         }
 
         // Function to update game status in the HTML
@@ -212,24 +223,19 @@
 
         // Function to update player stats in the HTML
         function updatePlayerStatsDisplay() {
-            const playerStatsDiv = document.getElementById('playerStats');
-            playerStatsDiv.innerHTML = "<h3>Player Stats:</h3>";
-            for (let player in playerStats) {
-                playerStatsDiv.innerHTML += `${player}: ${playerStats[player].points} points, ${playerEnergy[player]}% energy, ${playerFouls[player]} fouls<br>`;
-            }
-            playerStatsDiv.innerHTML += "<h3>Opponent Stats:</h3>";
-            for (let opponent in opponentStats) {
-                playerStatsDiv.innerHTML += `${opponent}: ${opponentStats[opponent].points} points, ${opponentEnergy[opponent]}% energy, ${opponentFouls[opponent]} fouls<br>`;
-            }
+            // Update Player stats
+            document.getElementById('player1Stats').innerText = `Player 1: ${playerStats.player1.points} points, ${playerEnergy.player1}% energy, ${playerFouls.player1} fouls`;
+            document.getElementById('player2Stats').innerText = `Player 2: ${playerStats.player2.points} points, ${playerEnergy.player2}% energy, ${playerFouls.player2} fouls`;
+            document.getElementById('player3Stats').innerText = `Player 3: ${playerStats.player3.points} points, ${playerEnergy.player3}% energy, ${playerFouls.player3} fouls`;
+
+            // Update Opponent stats
+            document.getElementById('opponent1Stats').innerText = `Opponent 1: ${opponentStats.opponent1.points} points, ${opponentEnergy.opponent1}% energy, ${opponentFouls.opponent1} fouls`;
+            document.getElementById('opponent2Stats').innerText = `Opponent 2: ${opponentStats.opponent2.points} points, ${opponentEnergy.opponent2}% energy, ${opponentFouls.opponent2} fouls`;
+            document.getElementById('opponent3Stats').innerText = `Opponent 3: ${opponentStats.opponent3.points} points, ${opponentEnergy.opponent3}% energy, ${opponentFouls.opponent3} fouls`;
         }
 
         // Start game button
-        document.getElementById('startButton').addEventListener('click', () => {
-            if (!gameOver) {
-                startGame();
-                updatePlayerStatsDisplay();
-            }
-        });
+        document.getElementById('startButton').addEventListener('click', startGame);
 
         // Reset game button
         document.getElementById('resetButton').addEventListener('click', resetGame);
