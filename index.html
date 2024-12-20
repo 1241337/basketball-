@@ -50,6 +50,26 @@
             color: #333;
             font-size: 16px;
         }
+        /* Progress bars styling */
+        .progress-bar-container {
+            width: 100%;
+            height: 20px;
+            background-color: #ddd;
+            margin-top: 10px;
+            border-radius: 10px;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+        }
+        #player-progress-bar {
+            background-color: #4CAF50; /* Green for player */
+            width: 0%;
+        }
+        #opponent-progress-bar {
+            background-color: #f44336; /* Red for opponent */
+            width: 0%;
+        }
     </style>
 </head>
 <body>
@@ -60,6 +80,15 @@
             <button id="start-game-btn">Start Game</button>
             <button id="reset-game-btn">Reset Game</button>
         </div>
+
+        <!-- Progress Bars -->
+        <div class="progress-bar-container">
+            <div id="player-progress-bar" class="progress-bar"></div>
+        </div>
+        <div class="progress-bar-container">
+            <div id="opponent-progress-bar" class="progress-bar"></div>
+        </div>
+
         <div id="game-status">
             <p>Game Status: Waiting to start...</p>
         </div>
@@ -75,10 +104,11 @@
         let opponentTeam = ['Opponent 1', 'Opponent 2', 'Opponent 3'];  // Example opponent names
         let seasonWinsPlayer = 0;
         let seasonWinsOpponent = 0;
+        const maxScore = 100;  // Max score for progress bar
 
         // Function to simulate a shot
         function shoot(player) {
-            // Simulate shooting success (just a random chance for simplicity)
+            // Simulate shooting success (random chance for simplicity)
             return Math.random() > 0.5;  // 50% chance of making a shot
         }
 
@@ -94,6 +124,14 @@
         // Function to update the game status
         function updateGameStatus(message) {
             document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
+        }
+
+        // Function to update the progress bars
+        function updateProgressBars() {
+            const playerProgress = (scorePlayer / maxScore) * 100;
+            const opponentProgress = (scoreOpponent / maxScore) * 100;
+            document.getElementById('player-progress-bar').style.width = playerProgress + '%';
+            document.getElementById('opponent-progress-bar').style.width = opponentProgress + '%';
         }
 
         // Function to simulate a quarter
@@ -180,6 +218,9 @@
                 // Show final scores for both teams at the end of the game
                 updateGameStatus(`Final Score: Player: ${scorePlayer} | Opponent: ${scoreOpponent}`);
             }
+
+            // Update progress bars after each quarter
+            updateProgressBars();
         }
 
         // Function to start the game
@@ -201,6 +242,7 @@
             scorePlayer = 0;
             scoreOpponent = 0;
             updateGameStatus("Game reset! Quarter 1");
+            updateProgressBars();  // Reset progress bars
         }
 
         // Event listeners for buttons
