@@ -2,7 +2,6 @@ let scorePlayer = 0;
 let scoreOpponent = 0;
 let currentQuarter = 1;
 let gameOver = false;
-let currentBallHandler = '';
 let gameLog = [];
 
 // Player and opponent stats
@@ -142,6 +141,33 @@ function startGame() {
     }
 }
 
+// Function to advance to the next quarter manually
+function advanceQuarter() {
+    if (gameOver) {
+        updateGameStatus("Game already over. Click reset to play again.");
+        return;
+    }
+
+    if (currentQuarter <= 4) {
+        updateGameStatus(`Advancing to Quarter ${currentQuarter}...`);
+        simulateQuarter();
+        currentQuarter++;
+
+        if (currentQuarter > 4) {
+            gameOver = true;
+            if (scorePlayer > scoreOpponent) {
+                updateGameStatus("Game over! Player wins!");
+            } else if (scoreOpponent > scorePlayer) {
+                updateGameStatus("Game over! Opponent wins!");
+            } else {
+                updateGameStatus("Game over! It's a tie!");
+            }
+        } else {
+            updateGameStatus(`Starting Quarter ${currentQuarter}`);
+        }
+    }
+}
+
 // Function to reset the game
 function resetGame() {
     scorePlayer = 0;
@@ -155,4 +181,5 @@ function resetGame() {
 
 // Add event listeners to the buttons
 document.getElementById('start-button').addEventListener('click', startGame);
+document.getElementById('advance-button').addEventListener('click', advanceQuarter); // New event listener for advancing game
 document.getElementById('reset-button').addEventListener('click', resetGame);
