@@ -12,6 +12,12 @@ function updateGameStatus(message) {
     document.getElementById('game-status').innerHTML += `<p>${message}</p>`;
 }
 
+// Function to update the scoreboard
+function updateScoreboard() {
+    document.getElementById('player-score').textContent = scorePlayer;
+    document.getElementById('opponent-score').textContent = scoreOpponent;
+}
+
 // Function to simulate a 2-point shot
 function shoot(player) {
     let shotChance = Math.random();
@@ -47,6 +53,7 @@ function simulateQuarter() {
                 scorePlayer += 2;
                 playerShotsMade++;
                 updateGameStatus(`${player} scores a 2-point shot!`);
+                updateScoreboard();
             } else {
                 updateGameStatus(`${player} misses a 2-point shot.`);
             }
@@ -55,6 +62,7 @@ function simulateQuarter() {
                 scorePlayer += 3;
                 playerShotsMade++;
                 updateGameStatus(`${player} scores a 3-point shot!`);
+                updateScoreboard();
             } else {
                 updateGameStatus(`${player} misses a 3-point shot.`);
             }
@@ -74,6 +82,7 @@ function simulateQuarter() {
                 scoreOpponent += 2;
                 opponentShotsMade++;
                 updateGameStatus(`${opponent} scores a 2-point shot!`);
+                updateScoreboard();
             } else {
                 updateGameStatus(`${opponent} misses a 2-point shot.`);
             }
@@ -82,6 +91,7 @@ function simulateQuarter() {
                 scoreOpponent += 3;
                 opponentShotsMade++;
                 updateGameStatus(`${opponent} scores a 3-point shot!`);
+                updateScoreboard();
             } else {
                 updateGameStatus(`${opponent} misses a 3-point shot.`);
             }
@@ -122,6 +132,7 @@ function startGame() {
     scorePlayer = 0;
     scoreOpponent = 0;
     updateGameStatus("Game started! Quarter 1");
+    updateScoreboard();
 
     // Simulate the first quarter
     simulateQuarter();
@@ -135,4 +146,5 @@ function resetGame() {
     scoreOpponent = 0;
     updateGameStatus("Game reset! Quarter 1");
     document.getElementById('game-status').innerHTML = ''; // Clear previous game info
+    updateScoreboard(); // Reset the scoreboard
 }
